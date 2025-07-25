@@ -61,4 +61,4 @@ Hasil program akan menghasilkan laporan penjadwalan mata kuliah dalam format HTM
 
 ![Contoh Gambar Laporan](report/20250725_165510/slot_waktu_usage_comparison.png)
 
-[Lihat laporan penjadwalan lengkap (HTML)](report/20250725_165510/data_laporan_penjadwalan_lengkap.html)
+[Lihat laporan penjadwalan lengkap (HTML)](report/20250725_165510/dataset_laporan_penjadwalan_lengkap.html)
