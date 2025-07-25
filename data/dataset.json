@@ -1,0 +1,61 @@
+{
+  "dosen": [
+    { "id": 1, "nama": "Dr. Andi Wijaya", "bidang_keahlian": "Kecerdasan Buatan", "email": "andi.wijaya@example.com" },
+    { "id": 2, "nama": "Dr. Siti Nurhaliza", "bidang_keahlian": "Sistem Informasi", "email": "siti.nurhaliza@example.com" },
+    { "id": 3, "nama": "Dr. Bambang", "bidang_keahlian": "Jaringan Komputer", "email": "bambang@example.com" },
+    { "id": 4, "nama": "Dr. Yuniarti", "bidang_keahlian": "Basis Data", "email": "yuniarti@example.com" },
+    { "id": 5, "nama": "Dr. Rudi Hartono", "bidang_keahlian": "Algoritma", "email": "rudi.hartono@example.com" },
+    { "id": 6, "nama": "Dr. Dewi Sartika", "bidang_keahlian": "Pemrograman", "email": "dewi.sartika@example.com" },
+    { "id": 7, "nama": "Dr. Anton Subekti", "bidang_keahlian": "Multimedia", "email": "anton.subekti@example.com" },
+    { "id": 8, "nama": "Dr. Lestari", "bidang_keahlian": "Sistem Cerdas", "email": "lestari@example.com" }
+  ],
+  "matakuliah": [
+    { "id": 1, "nama": "Pengantar Teknologi Informasi", "semester": 1, "sks": 2, "dosen_id": 1, "jumlah_mahasiswa": 35 },
+    { "id": 2, "nama": "Matematika Diskrit", "semester": 1, "sks": 3, "dosen_id": 2, "jumlah_mahasiswa": 30 },
+    { "id": 3, "nama": "Algoritma dan Pemrograman", "semester": 1, "sks": 3, "dosen_id": 5, "jumlah_mahasiswa": 29 },
+    { "id": 4, "nama": "Organisasi Komputer", "semester": 1, "sks": 2, "dosen_id": 3, "jumlah_mahasiswa": 45 },
+    { "id": 5, "nama": "Bahasa Inggris", "semester": 1, "sks": 2, "dosen_id": 4, "jumlah_mahasiswa": 35 },
+    { "id": 6, "nama": "Kewarganegaraan", "semester": 1, "sks": 2, "dosen_id": 6, "jumlah_mahasiswa": 40 },
+    { "id": 7, "nama": "Struktur Data", "semester": 3, "sks": 3, "dosen_id": 5, "jumlah_mahasiswa": 50 },
+    { "id": 8, "nama": "Sistem Operasi", "semester": 3, "sks": 3, "dosen_id": 3, "jumlah_mahasiswa": 35 },
+    { "id": 9, "nama": "Basis Data", "semester": 3, "sks": 3, "dosen_id": 4, "jumlah_mahasiswa": 45 },
+    { "id": 10, "nama": "Pemrograman Web", "semester": 3, "sks": 3, "dosen_id": 6, "jumlah_mahasiswa": 30 },
+    { "id": 11, "nama": "Statistika", "semester": 3, "sks": 2, "dosen_id": 7, "jumlah_mahasiswa": 25 },
+    { "id": 12, "nama": "Etika Profesi", "semester": 3, "sks": 2, "dosen_id": 2, "jumlah_mahasiswa": 45 },
+    { "id": 13, "nama": "Jaringan Komputer", "semester": 5, "sks": 3, "dosen_id": 3, "jumlah_mahasiswa": 40 },
+    { "id": 14, "nama": "Pemrograman Mobile", "semester": 5, "sks": 3, "dosen_id": 6, "jumlah_mahasiswa": 35 },
+    { "id": 15, "nama": "Sistem Informasi", "semester": 5, "sks": 3, "dosen_id": 2, "jumlah_mahasiswa": 50 },
+    { "id": 16, "nama": "Interaksi Manusia dan Komputer", "semester": 5, "sks": 2, "dosen_id": 8, "jumlah_mahasiswa": 30 },
+    { "id": 17, "nama": "Keamanan Informasi", "semester": 5, "sks": 2, "dosen_id": 4, "jumlah_mahasiswa": 45 },
+    { "id": 18, "nama": "Manajemen Proyek TI", "semester": 5, "sks": 2, "dosen_id": 7, "jumlah_mahasiswa": 40 },
+    { "id": 19, "nama": "Kecerdasan Buatan", "semester": 7, "sks": 3, "dosen_id": 1, "jumlah_mahasiswa": 30 },
+    { "id": 20, "nama": "Data Mining", "semester": 7, "sks": 3, "dosen_id": 8, "jumlah_mahasiswa": 25 },
+    { "id": 21, "nama": "Pemrograman Lanjut", "semester": 7, "sks": 3, "dosen_id": 5, "jumlah_mahasiswa": 20 },
+    { "id": 22, "nama": "Multimedia", "semester": 7, "sks": 2, "dosen_id": 7, "jumlah_mahasiswa": 30 },
+    { "id": 23, "nama": "Sistem Cerdas", "semester": 7, "sks": 2, "dosen_id": 1, "jumlah_mahasiswa": 30 },
+    { "id": 24, "nama": "Seminar TI", "semester": 7, "sks": 2, "dosen_id": 6, "jumlah_mahasiswa": 25 },
+    { "id": 25, "nama": "Desain UI/UX", "semester": 5, "sks": 2, "dosen_id": 8, "jumlah_mahasiswa": 35 },
+    { "id": 26, "nama": "Pemrograman Berbasis Objek", "semester": 3, "sks": 3, "dosen_id": 5, "jumlah_mahasiswa": 32 },
+    { "id": 27, "nama": "Big Data", "semester": 7, "sks": 3, "dosen_id": 1, "jumlah_mahasiswa": 25 },
+    { "id": 28, "nama": "Pemrosesan Bahasa Alami", "semester": 7, "sks": 2, "dosen_id": 1, "jumlah_mahasiswa": 20 },
+    { "id": 29, "nama": "Rekayasa Perangkat Lunak", "semester": 5, "sks": 3, "dosen_id": 6, "jumlah_mahasiswa": 32 },
+    { "id": 30, "nama": "Analisis dan Perancangan Sistem", "semester": 5, "sks": 2, "dosen_id": 2, "jumlah_mahasiswa": 30 },
+    { "id": 31, "nama": "Teknologi Cloud Computing", "semester": 7, "sks": 3, "dosen_id": 3, "jumlah_mahasiswa": 30 },
+    { "id": 32, "nama": "Manajemen Basis Data", "semester": 3, "sks": 2, "dosen_id": 4, "jumlah_mahasiswa": 28 }
+  ],
+  "slot_waktu": [
+    { "hari": "Senin", "jam_mulai": "08:00", "jam_selesai": "14:00" },
+    { "hari": "Selasa", "jam_mulai": "08:00", "jam_selesai": "14:00" },
+    { "hari": "Rabu", "jam_mulai": "08:00", "jam_selesai": "14:00" },
+    { "hari": "Kamis", "jam_mulai": "08:00", "jam_selesai": "15:00" },
+    { "hari": "Jumat", "jam_mulai": "08:00", "jam_selesai": "11:30" },
+    { "hari": "Sabtu", "jam_mulai": "08:00", "jam_selesai": "14:00" }
+  ],
+  "ruangan": [
+    { "id": 1, "nama": "Ruang A1", "kapasitas": 32 },
+    { "id": 2, "nama": "Ruang B1", "kapasitas": 32 },
+    { "id": 3, "nama": "Ruang C1", "kapasitas": 32 },
+    { "id": 4, "nama": "Ruang D1", "kapasitas": 32 },
+    { "id": 5, "nama": "Ruang E1", "kapasitas": 32 }
+  ]
+}
