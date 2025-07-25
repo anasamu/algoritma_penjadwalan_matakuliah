@@ -5,6 +5,20 @@
 Proyek ini membandingkan tiga algoritma penjadwalan mata kuliah: Greedy, Backtracking, dan Integer Linear Programming (ILP). Tujuan dari proyek ini adalah untuk mengevaluasi kinerja masing-masing algoritma dalam hal waktu eksekusi, jumlah sesi terjadwal, dan penggunaan sumber daya seperti
 ruangan dan slot waktu.
 
+## Studi Kasus
+
+Studi kasus yang digunakan adalah penjadwalan mata kuliah di sebuah universitas dengan data yang mencakup:
+
+- Dosen
+- Mata kuliah
+- Slot waktu
+- Ruangan
+- Jumlah mahasiswa
+- Kapasitas ruangan
+- Jumlah SKS mata kuliah
+- Jumlah sesi yang diperlukan untuk setiap mata kuliah
+- Hari dan jam kuliah
+
 ## Struktur Proyek
 
 ``` is_directory
@@ -28,6 +42,10 @@ jadwal_matakuliah/
 ## Instalasi dependensi
 
 ```bash
+# Buat virtual environment (opsional)
+python -m venv venv
+# Aktifkan virtual environment
+source venv/bin/activate  # Linux/Mac
 pip install -r requirements.txt
 ```
 
