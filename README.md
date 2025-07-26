@@ -59,6 +59,9 @@ python main.py
 
 Hasil program akan menghasilkan laporan penjadwalan mata kuliah dalam format HTML yang berisi:
 
+- Contoh dataset
+![Contoh File Dataset](data/dataset.json)
+
 - Perbandingan waktu eksekusi algoritma
 
 ![Contoh Gambar Laporan](report/20250725_165510/performance_comparison.png)
@@ -79,4 +82,4 @@ Hasil program akan menghasilkan laporan penjadwalan mata kuliah dalam format HTM
 
 ![Contoh Gambar Laporan](report/20250725_165510/slot_waktu_usage_comparison.png)
 
-[Lihat laporan penjadwalan lengkap (HTML)](report/20250725_165510/dataset_laporan_penjadwalan_lengkap.html)
+[Lihat output laporan](report/)
