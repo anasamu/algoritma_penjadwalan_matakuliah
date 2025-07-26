@@ -9,14 +9,14 @@ ruangan dan slot waktu.
 
 Studi kasus yang digunakan adalah penjadwalan mata kuliah di sebuah universitas dengan data yang mencakup:
 
-- Dosen
-- Mata kuliah
-- Slot waktu
-- Ruangan
-- Jumlah mahasiswa
-- Kapasitas ruangan
+- Jumlah Ruangan yang tersedia
+- Jumlah Dosen
+- Jumlah Mata kuliah
 - Jumlah SKS mata kuliah
+- Jumlah mahasiswa yang terdaftar di setiap mata kuliah
 - Jumlah sesi yang diperlukan untuk setiap mata kuliah
+- Slot waktu perkuliahan
+- Kapasitas ruangan
 - Hari dan jam kuliah
 
 ## Output yang diharapkan
@@ -40,10 +40,12 @@ Output dari program ini adalah laporan penjadwalan mata kuliah dalam format HTML
 jadwal_matakuliah/
 ├── data/
 │   └── dataset.json
-├── algortma/
+│   └── report_template.html
+├── algoritma/
 │   ├── greedy.py
 │   ├── backtracking.py
-│   └── ilp.py
+│   ├── ilp.py
+│   └── dynamic_programming.py
 ├── report/
 │   ├── automated generate folder report
 │       └── report_files.html
@@ -61,10 +63,19 @@ jadwal_matakuliah/
 git clone https://github.com/anasamu/algoritma_penjadwalan_matakuliah.git
 # Buat virtual environment (opsional)
 python -m venv venv
+
 # Aktifkan virtual environment
 source venv/bin/activate  # Linux/Mac
+venv\Scripts\activate  # Windows
+
+# Instal dependensi yang diperlukan
 pip install -r requirements.txt
 ```
+
+## Menyiapkan dataset
+
+- Contoh Dataset
+[dataset.json](data/dataset.json)
 
 ## Menjalankan program
 
@@ -75,9 +86,6 @@ python main.py
 ## Hasil Contoh program
 
 Hasil program akan menghasilkan laporan penjadwalan mata kuliah dalam format HTML yang berisi:
-
-- Contoh dataset
-[Contoh File Dataset](data/dataset.json)
 
 - Perbandingan waktu eksekusi algoritma
 
