@@ -19,6 +19,21 @@ Studi kasus yang digunakan adalah penjadwalan mata kuliah di sebuah universitas 
 - Jumlah sesi yang diperlukan untuk setiap mata kuliah
 - Hari dan jam kuliah
 
+## Output yang diharapkan
+
+Output dari program ini adalah laporan penjadwalan mata kuliah dalam format HTML yang mencakup:
+
+- Ringkasan penjadwalan dari 3 algoritma
+- Perbandingan waktu eksekusi algoritma
+- Perbandingan jumlah sesi terjadwal per hari
+- Perbandingan penggunaan mata kuliah
+- Perbandingan penggunaan ruangan
+- Perbandingan penggunaan slot waktu
+- Grafik perbandingan performa algoritma
+- Konflik yang ditemukan selama penjadwalan
+- Gambar-gambar yang relevan untuk visualisasi hasil
+- Laporan yang dihasilkan akan disimpan dalam folder `report/` dengan nama folder sesuai dengan tanggal dan waktu eksekusi.
+
 ## Struktur Proyek
 
 ``` is_directory
