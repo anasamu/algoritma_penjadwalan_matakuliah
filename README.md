@@ -57,6 +57,8 @@ jadwal_matakuliah/
 ## Instalasi dependensi
 
 ```bash
+# Clone repository ini
+git clone [<repository_url>](https://github.com/anasamu/algoritma_penjadwalan_matakuliah.git)
 # Buat virtual environment (opsional)
 python -m venv venv
 # Aktifkan virtual environment
