@@ -85,26 +85,30 @@ python main.py
 
 ## Hasil Contoh program
 
+Setelah menjalankan program, Anda akan mendapatkan laporan penjadwalan mata kuliah yang disimpan dalam folder `report/` dengan nama folder sesuai dengan tanggal dan waktu eksekusi. Laporan ini akan berisi ringkasan penjadwalan dari ketiga algoritma yang dibandingkan.
+
 Hasil program akan menghasilkan laporan penjadwalan mata kuliah dalam format HTML yang berisi:
+
+- Dataset yang digunakan
+
+- Ringkasan penjadwalan dari 3 algoritma
 
 - Perbandingan waktu eksekusi algoritma
 
-![Contoh Gambar Laporan](report/20250725_165510/performance_comparison.png)
+![Contoh Gambar Laporan](images/performance_comparison.png)
 
 - Perbandingan jumlah sesi terjadwal per hari
 
-![Contoh Gambar Laporan](report/20250725_165510/schedule_comparison.png)
+![Contoh Gambar Laporan](images/schedule_comparison.png)
 
 - Perbandingan penggunaan mata kuliah
 
-![Contoh Gambar Laporan](report/20250725_165510/matakuliah_usage_comparison.png)
+![Contoh Gambar Laporan](images/matakuliah_usage_comparison.png)
 
 - Perbandingan penggunaan ruangan
 
-![Contoh Gambar Laporan](report/20250725_165510/ruangan_usage_comparison.png)
+![Contoh Gambar Laporan](images/ruangan_usage_comparison.png)
 
 - Perbandingan penggunaan slot waktu
 
-![Contoh Gambar Laporan](report/20250725_165510/slot_waktu_usage_comparison.png)
-
-[Lihat output laporan](report/)
+![Contoh Gambar Laporan](images/slot_waktu_usage_comparison.png)

@@ -56,6 +56,28 @@
 
         <hr class="my-4"/>
 
+        <h2 class="text-primary border-bottom pb-2 mt-5">Detail Jadwal yang Dihasilkan</h2>
+        <!-- Bootstrap Tabs for Schedules -->
+        <ul class="nav nav-tabs" id="scheduleTab" role="tablist">
+            {{SCHEDULE_TAB_BUTTONS}}
+        </ul>
+        <div class="tab-content" id="scheduleTabContent">
+            <br/>
+            {{SCHEDULE_TAB_CONTENTS}}
+        </div>
+
+        <hr class="my-4"/>
+
+        <h2 class="text-primary border-bottom pb-2 mt-5">Sesi Gagal Dijadwalkan (Konflik)</h2>
+        <!-- Bootstrap Tabs for Failed Sessions -->
+        <ul class="nav nav-tabs" id="failedTab" role="tablist">
+            {{FAILED_TAB_BUTTONS}}
+        </ul>
+        <div class="tab-content" id="failedTabContent">
+            <br/>
+            {{FAILED_TAB_CONTENTS}}
+        </div>
+
         <h2 class="text-primary border-bottom pb-2 mt-5">Ringkasan Hasil Penjadwalan</h2>
         <p>Berikut adalah ringkasan hasil penjadwalan yang dihasilkan oleh masing-masing algoritma:</p>
         <h3 class="mt-4">Perbandingan Statistik Penjadwalan</h3>
@@ -102,30 +124,6 @@
         <h3 class="mt-4">Perbandingan Penggunaan Slot Waktu</h3>
         <div class="image-container text-center my-4">
             <img src="{{SLOT_USAGE_IMG}}" class="img-fluid rounded shadow-sm" alt="Perbandingan Penggunaan Slot Waktu">
-        </div>
-
-        <hr class="my-4"/>
-
-        <h2 class="text-primary border-bottom pb-2 mt-5">Detail Jadwal yang Dihasilkan</h2>
-        <!-- Bootstrap Tabs for Schedules -->
-        <ul class="nav nav-tabs" id="scheduleTab" role="tablist">
-            {{SCHEDULE_TAB_BUTTONS}}
-        </ul>
-        <div class="tab-content" id="scheduleTabContent">
-            <br/>
-            {{SCHEDULE_TAB_CONTENTS}}
-        </div>
-
-        <hr class="my-4"/>
-
-        <h2 class="text-primary border-bottom pb-2 mt-5">Sesi Gagal Dijadwalkan (Konflik)</h2>
-        <!-- Bootstrap Tabs for Failed Sessions -->
-        <ul class="nav nav-tabs" id="failedTab" role="tablist">
-            {{FAILED_TAB_BUTTONS}}
-        </ul>
-        <div class="tab-content" id="failedTabContent">
-            <br/>
-            {{FAILED_TAB_CONTENTS}}
         </div>
     </div>
 
