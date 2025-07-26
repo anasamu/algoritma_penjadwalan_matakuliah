@@ -60,7 +60,7 @@ python main.py
 Hasil program akan menghasilkan laporan penjadwalan mata kuliah dalam format HTML yang berisi:
 
 - Contoh dataset
-![Contoh File Dataset](data/dataset.json)
+[Contoh File Dataset](data/dataset.json)
 
 - Perbandingan waktu eksekusi algoritma
 
