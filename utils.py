@@ -1,11 +1,9 @@
-# utils.py
-
 import json
 import matplotlib.pyplot as plt
 from collections import defaultdict
 import os
 import random
-import datetime # Import datetime for timestamp
+import datetime
 
 def sks_to_minutes(sks):
     """Mengubah SKS menjadi durasi menit."""
@@ -40,7 +38,7 @@ def get_dosen_name(dosen_id, dosen_list):
     return "Unknown Dosen"
 
 def get_usage_counts(schedule, key_name_or_func):
-    """Helper to count usage of items based on a key name or function."""
+    """Helper untuk menghitung penggunaan item berdasarkan nama kunci atau fungsi."""
     usage_counts = defaultdict(int)
     for item in schedule:
         if callable(key_name_or_func):
@@ -50,11 +48,10 @@ def get_usage_counts(schedule, key_name_or_func):
         usage_counts[key] += 1
     return dict(usage_counts)
 
-# <hr/> Global Order for Days <hr/>
+# Global Order for Days
 HARI_ORDER = {"Senin": 1, "Selasa": 2, "Rabu": 3, "Kamis": 4, "Jumat": 5, "Sabtu": 6, "Minggu": 7}
-UNIQUE_ID = random.randint(100000, 999999)  # Unique ID for each report
 
-# <hr/> Konflik Checker <hr/>
+# Konflik Checker
 def check_conflicts(schedule):
     """Memeriksa konflik dalam jadwal."""
     konflik = []
@@ -89,13 +86,17 @@ def check_conflicts(schedule):
     return list(set(konflik))
 
 
-# <hr/> Visualization Functions (Updated for 3 algorithms) <hr/>
-def performance_comparison(backtracking_time, greedy_time, ilp_time, report_dir, filename="performance_comparison.png"):
-    algorithms = ['Backtracking', 'Greedy', 'ILP']
-    times = [backtracking_time, greedy_time, ilp_time]
+# Visualization Functions
+def performance_comparison(algorithm_results, report_dir, filename="performance_comparison.png"):
+    """
+    Membuat grafik perbandingan waktu eksekusi untuk berbagai algoritma.
+    Menerima dictionary hasil algoritma: {'Nama Algoritma': {'schedule': [...], 'stats': {'execution_time': ...}}}
+    """
+    algorithms = [name for name in algorithm_results.keys()]
+    times = [result['stats']['execution_time'] for result in algorithm_results.values()]
 
-    plt.figure(figsize=(10, 6))
-    bars = plt.bar(algorithms, times, color=['skyblue', 'salmon', 'lightgreen'])
+    plt.figure(figsize=(12, 6))
+    bars = plt.bar(algorithms, times, color=['skyblue', 'salmon', 'lightgreen', 'gold'][:len(algorithms)])
     plt.ylabel('Execution Time (seconds)')
     plt.title('Performa Eksekusi Algoritma Penjadwalan')
     plt.grid(axis='y', linestyle='--', alpha=0.7)
@@ -109,20 +110,28 @@ def performance_comparison(backtracking_time, greedy_time, ilp_time, report_dir,
     plt.savefig(os.path.join(report_dir, filename))
     plt.close()
 
-def schedule_comparison(backtracking_schedule, greedy_schedule, ilp_schedule, report_dir, filename="schedule_comparison.png"):
+def schedule_comparison(algorithm_results, report_dir, filename="schedule_comparison.png"):
+    """
+    Membuat grafik perbandingan jumlah sesi terjadwal per hari untuk berbagai algoritma.
+    Menerima dictionary hasil algoritma.
+    """
     ordered_days = ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"]
     
-    backtracking_counts = [sum(1 for item in backtracking_schedule if item["hari"] == day) for day in ordered_days]
-    greedy_counts = [sum(1 for item in greedy_schedule if item["hari"] == day) for day in ordered_days]
-    ilp_counts = [sum(1 for item in ilp_schedule if item["hari"] == day) for day in ordered_days]
+    all_counts = {}
+    for algo_name, result in algorithm_results.items():
+        schedule = result['schedule']
+        all_counts[algo_name] = [sum(1 for item in schedule if item["hari"] == day) for day in ordered_days]
 
     x = range(len(ordered_days))
-    width = 0.25
-
-    plt.figure(figsize=(12, 7))
-    plt.bar([i - width for i in x], backtracking_counts, width, label='Backtracking', color='skyblue')
-    plt.bar(x, greedy_counts, width, label='Greedy', color='salmon')
-    plt.bar([i + width for i in x], ilp_counts, width, label='ILP', color='lightgreen')
+    width = 0.8 / len(algorithm_results) # Dynamically adjust bar width
+    
+    plt.figure(figsize=(15, 7))
+    
+    # Define a set of colors for dynamic plotting
+    colors = ['skyblue', 'salmon', 'lightgreen', 'gold', 'plum', 'darkseagreen', 'lightcoral', 'cornflowerblue']
+    
+    for i, (algo_name, counts) in enumerate(all_counts.items()):
+        plt.bar([pos + i * width - (len(algorithm_results) - 1) * width / 2 for pos in x], counts, width, label=algo_name, color=colors[i % len(colors)])
 
     plt.ylabel('Number of Scheduled Sessions')
     plt.title('Perbandingan Jumlah Sesi Terjadwal per Hari')
@@ -134,109 +143,79 @@ def schedule_comparison(backtracking_schedule, greedy_schedule, ilp_schedule, re
     plt.savefig(os.path.join(report_dir, filename))
     plt.close()
 
-def compare_matakuliah_usage(backtracking_schedule, greedy_schedule, ilp_schedule, report_dir, filename="matakuliah_usage_comparison.png"):
-    backtracking_mk_usage = get_usage_counts(backtracking_schedule, "matakuliah")
-    greedy_mk_usage = get_usage_counts(greedy_schedule, "matakuliah")
-    ilp_mk_usage = get_usage_counts(ilp_schedule, "matakuliah")
-
-    all_matakuliah = sorted(list(set(list(backtracking_mk_usage.keys()) + list(greedy_mk_usage.keys()) + list(ilp_mk_usage.keys()))))
-    
-    backtracking_values = [backtracking_mk_usage.get(mk, 0) for mk in all_matakuliah]
-    greedy_values = [greedy_mk_usage.get(mk, 0) for mk in all_matakuliah]
-    ilp_values = [ilp_mk_usage.get(mk, 0) for mk in all_matakuliah]
-
-    x = range(len(all_matakuliah))
-    width = 0.25
-
-    plt.figure(figsize=(15, 8))
-    plt.bar([i - width for i in x], backtracking_values, width, label='Backtracking', color='skyblue')
-    plt.bar(x, greedy_values, width, label='Greedy', color='salmon')
-    plt.bar([i + width for i in x], ilp_values, width, label='ILP', color='lightgreen')
-
-    plt.ylabel('Number of Sessions Scheduled')
-    plt.title('Perbandingan Penggunaan Mata Kuliah')
-    plt.xticks(x, all_matakuliah, rotation=90, fontsize=8)
-    plt.legend()
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
-    plt.tight_layout()
-    os.makedirs(report_dir, exist_ok=True) # Ensure the specific report directory exists
-    plt.savefig(os.path.join(report_dir, filename))
-    plt.close()
-
-def compare_ruangan_usage(backtracking_schedule, greedy_schedule, ilp_schedule, report_dir, filename="ruangan_usage_comparison.png"):
-    backtracking_room_usage = get_usage_counts(backtracking_schedule, "ruangan")
-    greedy_room_usage = get_usage_counts(greedy_schedule, "ruangan")
-    ilp_room_usage = get_usage_counts(ilp_schedule, "ruangan")
-
-    all_ruangan = sorted(list(set(list(backtracking_room_usage.keys()) + list(greedy_room_usage.keys()) + list(ilp_room_usage.keys()))))
-
-    backtracking_values = [backtracking_room_usage.get(room, 0) for room in all_ruangan]
-    greedy_values = [greedy_room_usage.get(room, 0) for room in all_ruangan]
-    ilp_values = [ilp_room_usage.get(room, 0) for room in all_ruangan]
-
-    x = range(len(all_ruangan))
-    width = 0.25
-
-    plt.figure(figsize=(10, 6))
-    plt.bar([i - width for i in x], backtracking_values, width, label='Backtracking', color='skyblue')
-    plt.bar(x, greedy_values, width, label='Greedy', color='salmon')
-    plt.bar([i + width for i in x], ilp_values, width, label='ILP', color='lightgreen')
-
-    plt.ylabel('Number of Sessions Scheduled')
-    plt.title('Perbandingan Penggunaan Ruangan')
-    plt.xticks(x, all_ruangan, rotation=45)
-    plt.legend()
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
-    plt.tight_layout()
-    os.makedirs(report_dir, exist_ok=True) # Ensure the specific report directory exists
-    plt.savefig(os.path.join(report_dir, filename))
-    plt.close()
-
-def compare_slot_waktu_usage(backtracking_schedule, greedy_schedule, ilp_schedule, report_dir, filename="slot_waktu_usage_comparison.png"):
-    def get_slot_key(item):
-        return f"{item['hari']} {item['jam_mulai']}"
-
-    backtracking_slot_usage = get_usage_counts(backtracking_schedule, get_slot_key)
-    greedy_slot_usage = get_usage_counts(greedy_schedule, get_slot_key)
-    ilp_slot_usage = get_usage_counts(ilp_schedule, get_slot_key)
-
-    all_slots = list(set(list(backtracking_slot_usage.keys()) + list(greedy_slot_usage.keys()) + list(ilp_slot_usage.keys())))
-
-    def sort_key_for_slots(slot_str):
-        parts = slot_str.split(' ')
-        hari = parts[0]
-        jam_mulai = parts[1]
-        return (HARI_ORDER.get(hari, 99), time_to_minutes(jam_mulai))
-
-    all_slots = sorted(all_slots, key=sort_key_for_slots)
-
-    backtracking_values = [backtracking_slot_usage.get(slot, 0) for slot in all_slots]
-    greedy_values = [greedy_slot_usage.get(slot, 0) for slot in all_slots]
-    ilp_values = [ilp_slot_usage.get(slot, 0) for slot in all_slots]
-
-    x = range(len(all_slots))
-    width = 0.25
-
-    plt.figure(figsize=(18, 7))
-    plt.bar([i - width for i in x], backtracking_values, width, label='Backtracking', color='skyblue')
-    plt.bar(x, greedy_values, width, label='Greedy', color='salmon')
-    plt.bar([i + width for i in x], ilp_values, width, label='ILP', color='lightgreen')
-
-    plt.ylabel('Number of Sessions Scheduled')
-    plt.title('Perbandingan Penggunaan Slot Waktu')
-    plt.xticks(x, all_slots, rotation=90, fontsize=7)
-    plt.legend()
-    plt.grid(axis='y', linestyle='--', alpha=0.7)
-    plt.tight_layout()
-    os.makedirs(report_dir, exist_ok=True) # Ensure the specific report directory exists
-    plt.savefig(os.path.join(report_dir, filename))
-    plt.close()
-
-
-def generate_html_schedule_content(schedule, algorithm_prefix, ordered_days=["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"]):
+def compare_usage(algorithm_results, key_name_or_func, title, ylabel, report_dir, filename):
     """
-    Menghasilkan konten HTML (tabel jadwal per hari) untuk dimasukkan ke dalam accordion.
-    Menerima 'algorithm_prefix' untuk ID unik accordion.
+    Membuat grafik perbandingan penggunaan (mata kuliah, ruangan, slot waktu) untuk berbagai algoritma.
+    Menerima dictionary hasil algoritma, kunci untuk penggunaan, judul grafik, label Y, direktori laporan, dan nama file.
+    """
+    all_usage_counts = {}
+    all_items = set()
+
+    for algo_name, result in algorithm_results.items():
+        schedule = result['schedule']
+        usage = get_usage_counts(schedule, key_name_or_func)
+        all_usage_counts[algo_name] = usage
+        all_items.update(usage.keys())
+
+    # Custom sorting for time slots
+    if title == 'Perbandingan Penggunaan Slot Waktu':
+        def sort_key_for_slots(slot_str):
+            parts = slot_str.split(' ')
+            hari = parts[0]
+            jam_mulai = parts[1]
+            return (HARI_ORDER.get(hari, 99), time_to_minutes(jam_mulai))
+        sorted_items = sorted(list(all_items), key=sort_key_for_slots)
+    else:
+        sorted_items = sorted(list(all_items))
+
+    x = range(len(sorted_items))
+    width = 0.8 / len(algorithm_results) # Dynamically adjust bar width
+
+    plt.figure(figsize=(max(12, len(sorted_items) * 0.8), 7)) # Adjust figure size based on number of items
+    
+    colors = ['skyblue', 'salmon', 'lightgreen', 'gold', 'plum', 'darkseagreen', 'lightcoral', 'cornflowerblue']
+
+    for i, (algo_name, usage_data) in enumerate(all_usage_counts.items()):
+        values = [usage_data.get(item, 0) for item in sorted_items]
+        plt.bar([pos + i * width - (len(algorithm_results) - 1) * width / 2 for pos in x], values, width, label=algo_name, color=colors[i % len(colors)])
+
+    plt.ylabel(ylabel)
+    plt.title(title)
+    plt.xticks(x, sorted_items, rotation=90, fontsize=8)
+    plt.legend()
+    plt.grid(axis='y', linestyle='--', alpha=0.7)
+    plt.tight_layout()
+    os.makedirs(report_dir, exist_ok=True)
+    plt.savefig(os.path.join(report_dir, filename))
+    plt.close()
+
+# HTML Content Generation Helpers
+def create_html_table(data_list, headers_map):
+    """
+    Menghasilkan tabel HTML dari list dictionaries dengan kelas Bootstrap.
+    data_list: list of dictionaries [{key: value}, ...]
+    headers_map: dictionary mapping {Header Display Name: data_key_in_dict}
+                 e.g., {"Mata Kuliah ID": "id"}
+    """
+    if not data_list:
+        return "<p>Tidak ada data.</p>"
+    
+    table_html = "<table class='table table-bordered table-striped table-hover'>\n<thead>\n<tr>"
+    for header_display_name in headers_map.keys():
+        table_html += f"<th>{header_display_name}</th>"
+    table_html += "</tr>\n</thead>\n<tbody>\n"
+    
+    for item in data_list:
+        table_html += "<tr>"
+        for data_key in headers_map.values():
+            table_html += f"<td>{item.get(data_key, '')}</td>"
+        table_html += "</tr>\n"
+    table_html += "</tbody>\n</table>"
+    return table_html
+
+def generate_html_schedule_content(schedule, ordered_days=["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"]):
+    """
+    Menghasilkan konten HTML (tabel jadwal per hari) untuk dimasukkan ke dalam accordion Bootstrap.
     """
     html_content = ""
     if not schedule:
@@ -249,55 +228,71 @@ def generate_html_schedule_content(schedule, algorithm_prefix, ordered_days=["Se
         for entry in sorted_schedule:
             schedule_per_day[entry["hari"]].append(entry)
 
-        for day in ordered_days:
+        # Use a unique ID for each algorithm's accordion parent
+        # This will be passed from generate_full_report_html
+        accordion_parent_id = "accordionPlaceholder" # This will be replaced by algo-specific ID
+
+        html_content += f'<div class="accordion" id="{accordion_parent_id}">\n'
+        for idx, day in enumerate(ordered_days):
             entries = schedule_per_day.get(day, [])
             if entries:
-                # Accordion button
+                # Generate unique IDs for each accordion item
+                heading_id = f"heading{day.lower()}{idx}"
+                collapse_id = f"collapse{day.lower()}{idx}"
+
                 html_content += f"""
-                <button class="accordion">{day} ({len(entries)} Sesi)</button>
-                <div class="panel">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="{heading_id}">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#{collapse_id}" aria-expanded="false" aria-controls="{collapse_id}">
+                            {day} ({len(entries)} Sesi)
+                        </button>
+                    </h2>
+                    <div id="{collapse_id}" class="accordion-collapse collapse" aria-labelledby="{heading_id}" data-bs-parent="#{accordion_parent_id}">
+                        <div class="accordion-body">
+                            <table class="table table-bordered table-striped table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Waktu</th>
+                                        <th>Ruangan</th>
+                                        <th>Mata Kuliah</th>
+                                        <th>Dosen</th>
+                                        <th>Sesi Ke</th>
+                                        <th>Jml. Mahasiswa</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
                 """
-                
-                # Table inside accordion panel
-                html_content += "<table>\n"
-                html_content += "    <thead>\n"
-                html_content += "        <tr>\n"
-                html_content += "            <th>Waktu</th>\n"
-                html_content += "            <th>Ruangan</th>\n"
-                html_content += "            <th>Mata Kuliah</th>\n"
-                html_content += "            <th>Dosen</th>\n"
-                html_content += "            <th>Sesi Ke</th>\n"
-                html_content += "            <th>Jml. Mahasiswa</th>\n"
-                html_content += "        </tr>\n"
-                html_content += "    </thead>\n"
-                html_content += "    <tbody>\n"
                 for item in entries:
                     html_content += f"""
-                    <tr>
-                        <td>{item.get('jam_mulai', '')} - {item.get('jam_selesai', '')}</td>
-                        <td>{item.get('ruangan', '')}</td>
-                        <td>{item.get('matakuliah', '')}</td>
-                        <td>{item.get('dosen', '')}</td>
-                        <td>{item.get('sesi', '')}</td>
-                        <td>{item.get('jumlah_mahasiswa', '')}</td>
-                    </tr>
+                                    <tr>
+                                        <td>{item.get('jam_mulai', '')} - {item.get('jam_selesai', '')}</td>
+                                        <td>{item.get('ruangan', '')}</td>
+                                        <td>{item.get('matakuliah', '')}</td>
+                                        <td>{item.get('dosen', '')}</td>
+                                        <td>{item.get('sesi', '')}</td>
+                                        <td>{item.get('jumlah_mahasiswa', '')}</td>
+                                    </tr>
                     """
-                html_content += "    </tbody>\n"
-                html_content += "</table>\n"
-                html_content += "</div>\n" # Close panel div
+                html_content += """
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                """
+        html_content += '</div>\n' # Close accordion div
 
     return html_content
 
 def generate_html_failed_sessions_content(failed_sessions):
     """
-    Menghasilkan konten HTML untuk daftar sesi yang gagal dijadwalkan (konflik).
-    Menerima list dictionaries dari failed_sessions.
+    Menghasilkan konten HTML untuk daftar sesi yang gagal dijadwalkan (konflik) dengan kelas Bootstrap.
     """
     html_content = ""
     if not failed_sessions:
         html_content += "<p>Tidak ada sesi yang gagal dijadwalkan (bebas konflik).</p>"
     else:
-        html_content += "<table>\n"
+        html_content += "<table class='table table-bordered table-striped table-hover'>\n"
         html_content += "    <thead>\n"
         html_content += "        <tr>\n"
         html_content += "            <th>Mata Kuliah</th>\n"
@@ -309,8 +304,6 @@ def generate_html_failed_sessions_content(failed_sessions):
         html_content += "    </thead>\n"
         html_content += "    <tbody>\n"
         for item in failed_sessions:
-            # Asumsi item di failed_sessions memiliki 'matakuliah', 'dosen', dan 'reason'
-            # Anda mungkin perlu menyesuaikan key 'reason' jika struktur data Anda berbeda
             mk_name = item.get('matakuliah', 'N/A')
             dosen_name = item.get('dosen', 'N/A')
             sesi_ke = item.get('sesi', 'N/A')
@@ -329,27 +322,35 @@ def generate_html_failed_sessions_content(failed_sessions):
         html_content += "</table>\n"
     return html_content
 
-# <hr/> FUNGSI UTAMA UNTUK GENERATE LAPORAN LENGKAP <hr/>
-def generate_full_report_html(dataset, backtracking_result, greedy_result, ilp_result, output_filename="laporan_penjadwalan.html"):
+# MAIN FUNCTION TO GENERATE FULL REPORT
+def generate_full_report_html(dataset, algorithm_results, output_filename="laporan_penjadwalan.html", template_path="./data/report_template.html"):
+    """
+    Menghasilkan laporan HTML lengkap yang membandingkan hasil dari berbagai algoritma penjadwalan.
+    dataset: dictionary berisi data mentah (matakuliah, dosen, slot_waktu, ruangan).
+    algorithm_results: dictionary berisi hasil dari setiap algoritma.
+                       Contoh: {'Backtracking': {'schedule': [...], 'stats': {...}}, ...}
+    output_filename: Nama file HTML yang akan dihasilkan.
+    template_path: Path ke file template HTML.
+    """
     
     # Generate a unique directory name based on timestamp
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     report_dir = os.path.join('report', timestamp)
     os.makedirs(report_dir, exist_ok=True) # Create the timestamped directory
 
-    # 1. Persiapkan data mata kuliah agar menampilkan nama dosen
+    # 1. Prepare matakuliah data to display dosen names
     matakuliah_data_for_table = []
     for mk in dataset['matakuliah']:
-        mk_copy = mk.copy() # Buat salinan agar tidak memodifikasi dataset asli
+        mk_copy = mk.copy() # Create a copy to avoid modifying original dataset
         mk_copy['dosen_name'] = get_dosen_name(mk['dosen_id'], dataset['dosen'])
         matakuliah_data_for_table.append(mk_copy)
 
-    # 2. Hitung jumlah mata kuliah yang diampu setiap dosen
+    # 2. Count number of courses taught by each dosen
     dosen_mk_counts = defaultdict(int)
     for mk in dataset['matakuliah']:
         dosen_mk_counts[mk['dosen_id']] += 1
     
-    # 3. Gabungkan data dosen dengan jumlah mata kuliah
+    # 3. Combine dosen data with course counts
     dosen_data_for_table = []
     for dosen in dataset['dosen']:
         dosen_id = dosen['id']
@@ -361,372 +362,119 @@ def generate_full_report_html(dataset, backtracking_result, greedy_result, ilp_r
             "jumlah_matakuliah_diampu": mk_count
         })
 
-    # 4. Ekstrak jadwal dan statistik
-    backtracking_schedule = backtracking_result['schedule']
-    greedy_schedule = greedy_result['schedule']
-    ilp_schedule = ilp_result['schedule']
-
-    backtracking_stats = backtracking_result['stats']
-    greedy_stats = greedy_result['stats']
-    ilp_stats = ilp_result['stats']
-
-    # 5. Generate semua grafik visualisasi, passing report_dir
+    # 4. Generate all visualization graphs, passing report_dir
     perf_img = "performance_comparison.png"
     schedule_day_img = "schedule_comparison.png"
     mk_usage_img = "matakuliah_usage_comparison.png"
     room_usage_img = "ruangan_usage_comparison.png"
     slot_usage_img = "slot_waktu_usage_comparison.png"
 
-    performance_comparison(
-        backtracking_stats['execution_time'],
-        greedy_stats['execution_time'],
-        ilp_stats['execution_time'],
-        report_dir, # Pass report_dir
-        filename=perf_img
-    )
-    schedule_comparison(backtracking_schedule, greedy_schedule, ilp_schedule, report_dir, filename=schedule_day_img) # Pass report_dir
-    compare_matakuliah_usage(backtracking_schedule, greedy_schedule, ilp_schedule, report_dir, filename=mk_usage_img) # Pass report_dir
-    compare_ruangan_usage(backtracking_schedule, greedy_schedule, ilp_schedule, report_dir, filename=room_usage_img) # Pass report_dir
-    compare_slot_waktu_usage(backtracking_schedule, greedy_schedule, ilp_schedule, report_dir, filename=slot_usage_img) # Pass report_dir
+    # Pass the entire algorithm_results dictionary to the visualization functions
+    performance_comparison(algorithm_results, report_dir, filename=perf_img)
+    schedule_comparison(algorithm_results, report_dir, filename=schedule_day_img)
+    compare_usage(algorithm_results, "matakuliah", 'Perbandingan Penggunaan Mata Kuliah', 'Number of Sessions Scheduled', report_dir, filename=mk_usage_img)
+    compare_usage(algorithm_results, "ruangan", 'Perbandingan Penggunaan Ruangan', 'Number of Sessions Scheduled', report_dir, filename=room_usage_img)
+    
+    def get_slot_key(item):
+        return f"{item['hari']} {item['jam_mulai']}"
+    compare_usage(algorithm_results, get_slot_key, 'Perbandingan Penggunaan Slot Waktu', 'Number of Sessions Scheduled', report_dir, filename=slot_usage_img)
 
-    # Fungsi bantu untuk membuat tabel HTML dari list dictionaries
-    def create_html_table(data_list, headers_map):
-        """
-        data_list: list of dictionaries [{key: value}, ...]
-        headers_map: dictionary mapping {Header Display Name: data_key_in_dict}
-                     e.g., {"Mata Kuliah ID": "id"}
-        """
-        if not data_list:
-            return "<p>Tidak ada data.</p>"
-        
-        table_html = "<table>\n<thead>\n<tr>"
-        for header_display_name in headers_map.keys():
-            table_html += f"<th>{header_display_name}</th>"
-        table_html += "</tr>\n</thead>\n<tbody>\n"
-        
-        for item in data_list:
-            table_html += "<tr>"
-            for data_key in headers_map.values():
-                table_html += f"<td>{item.get(data_key, '')}</td>"
-            table_html += "</tr>\n"
-        table_html += "</tbody>\n</table>"
-        return table_html
-
-    # Membuat tabel untuk setiap bagian dataset
-    # Perbarui mk_headers untuk menggunakan 'dosen_name'
+    # Define headers for dataset tables
     mk_headers = {"ID": "id", "Nama": "nama", "SKS": "sks", "Dosen": "dosen_name", "Jumlah Mahasiswa": "jumlah_mahasiswa"}
     dosen_headers = {"ID": "id", "Nama": "nama", "Jumlah Mata Kuliah Diampu": "jumlah_matakuliah_diampu"}
     slot_headers = {"Hari": "hari", "Jam Mulai": "jam_mulai", "Jam Selesai": "jam_selesai"}
     ruangan_headers = {"ID": "id", "Nama": "nama", "Kapasitas": "kapasitas"}
 
-    # Gunakan matakuliah_data_for_table yang sudah diperkaya dengan nama dosen
+    # Generate HTML tables for dataset
     mk_table_html = create_html_table(matakuliah_data_for_table, mk_headers)
-    dosen_table_html = create_html_table(dosen_data_for_table, dosen_headers) # Gunakan data dosen yang sudah diperkaya
+    dosen_table_html = create_html_table(dosen_data_for_table, dosen_headers)
     slot_table_html = create_html_table(dataset['slot_waktu'], slot_headers)
     ruangan_table_html = create_html_table(dataset['ruangan'], ruangan_headers)
 
-    # Dapatkan konten jadwal untuk setiap algoritma (sekarang menggunakan Accordion)
-    backtracking_schedule_content = generate_html_schedule_content(backtracking_schedule, "backtracking")
-    greedy_schedule_content = generate_html_schedule_content(greedy_schedule, "greedy")
-    ilp_schedule_content = generate_html_schedule_content(ilp_schedule, "ilp")
+    # Generate dynamic schedule and failed sessions tabs
+    schedule_tabs_html = ""
+    failed_tabs_html = ""
+    schedule_tab_buttons_html = ""
+    failed_tab_buttons_html = ""
 
-    # Dapatkan konten failed sessions/konflik untuk setiap algoritma
-    # Menggunakan 'failed_details' sebagai sumber data konflik
-    backtracking_failed_content = generate_html_failed_sessions_content(backtracking_stats.get('failed_details', []))
-    greedy_failed_content = generate_html_failed_sessions_content(greedy_stats.get('failed_details', []))
-    ilp_failed_content = generate_html_failed_sessions_content(ilp_stats.get('failed_details', []))
+    # Generate algorithm stats rows
+    algorithm_stats_rows = ""
+    for name, result in algorithm_results.items():
+        algorithm_stats_rows += f"""
+        <tr>
+            <td>{name}</td>
+            <td>{result['stats']['total_slots_attempted']}</td>
+            <td>{result['stats']['scheduled_slots']}</td>
+            <td class="{'' if result['stats']['conflicts'] == 0 else 'highlight-error'}">{result['stats']['conflicts']}</td>
+            <td>{result['stats']['execution_time']:.4f}</td>
+        </tr>
+        """
 
-    # 6. Bangun konten HTML final - Update image paths to include report_dir
-    html_content = f"""
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Laporan Lengkap Penjadwalan Kuliah</title>
-        <style>
-            body {{ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; background-color: #eef1f5; color: #333; }}
-            .container {{ max-width: 1200px; margin: 30px auto; padding: 25px; background-color: #ffffff; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }}
-            h1, h2, h3 {{ color: #0056b3; border-bottom: 2px solid #0056b3; padding-bottom: 10px; margin-top: 40px; }}
-            h1 {{ text-align: center; font-size: 2.5em; color: #003366; }}
-            h2 {{ font-size: 1.8em; }}
-            h3 {{ font-size: 1.4em; border-bottom: 1px solid #ccc; }}
-            table {{ width: 100%; border-collapse: collapse; margin-bottom: 30px; background-color: #fff; }}
-            th, td {{ border: 1px solid #ddd; padding: 12px; text-align: left; vertical-align: top; }}
-            th {{ background-color: #e2e6ea; color: #333; font-weight: bold; }}
-            tr:nth-child(even) {{ background-color: #f9f9f9; }}
-            tr:hover {{ background-color: #f1f1f1; }}
-            .image-container {{ text-align: center; margin: 30px 0; }}
-            .image-container img {{ max-width: 90%; height: auto; border: 1px solid #ddd; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }}
-            .highlight-error {{ color: red; font-weight: bold; }}
+    # Flags to determine which tab button should be active initially
+    is_first_schedule_algo = True
+    is_first_failed_algo = True
 
-            /* <hr/> Styles for Tabs <hr/> */
-            .tab-container {{ overflow: hidden; border: 1px solid #ccc; background-color: #f1f1f1; margin-bottom: 20px; border-radius: 8px; }}
-            .tab-button {{ background-color: inherit; float: left; border: none; outline: none; cursor: pointer; padding: 14px 16px; transition: 0.3s; font-size: 17px; }}
-            .tab-button:hover {{ background-color: #ddd; }}
-            .tab-button.active {{ background-color: #ccc; }}
-            .tab-content {{ display: none; padding: 20px; border-top: none; animation: fadeEffect 0.5s; }}
-            @keyframes fadeEffect {{
-                from {{opacity: 0;}}
-                to {{opacity: 1;}}
-            }}
-            /* <hr/> End Styles for Tabs <hr/> */
+    for algo_name, result in algorithm_results.items():
+        # Sanitize algo_name for HTML ID
+        algo_id = algo_name.lower().replace(" ", "-")
 
-            /* <hr/> Styles for Accordion <hr/> */
-            .accordion {{
-                background-color: #eee;
-                color: #444;
-                cursor: pointer;
-                padding: 18px;
-                width: 100%;
-                border: none;
-                text-align: left;
-                outline: none;
-                font-size: 15px;
-                transition: 0.4s;
-                border-bottom: 1px solid #ddd;
-                font-weight: bold;
-            }}
-            .accordion.active, .accordion:hover {{
-                background-color: #ccc;
-            }}
-            .accordion:last-of-type {{
-                border-bottom: none;
-            }}
-            .panel {{
-                padding: 0 18px;
-                background-color: white;
-                max-height: 0;
-                overflow: hidden;
-                transition: max-height 0.2s ease-out;
-            }}
-            .panel table {{
-                margin-top: 15px;
-                margin-bottom: 15px;
-            }}
-            /* <hr/> End Styles for Accordion <hr/> */
-            .conflict-row td {{
-                background-color: #ffe0e0; /* Light red background for conflict rows */
-            }}
-            .conflict-item {{
-                color: #c00;
-                font-weight: bold;
-            }}
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>Laporan Lengkap Penjadwalan Kuliah</h1>
-            <p>Laporan ini menyajikan hasil penjadwalan kuliah menggunakan tiga algoritma berbeda: <strong>Backtracking</strong>, <strong>Greedy</strong>, dan <strong>Integer Linear Programming (ILP)</strong>. Tujuannya adalah membandingkan performa dan efektivitas masing-masing algoritma dalam menghasilkan jadwal yang optimal dan bebas konflik berdasarkan dataset yang diberikan.</p>
-
-            <hr/>
-
-            <h2>Dataset yang Digunakan</h2>
-            <p>Berikut adalah detail komponen dataset yang digunakan untuk proses penjadwalan:</p>
-
-            <h3>Data Mata Kuliah</h3>
-            {mk_table_html}
-
-            <h3>Data Dosen</h3>
-            {dosen_table_html}
-
-            <h3>Data Slot Waktu</h3>
-            {slot_table_html}
-
-            <h3>Data Ruangan</h3>
-            {ruangan_table_html}
-
-            <hr/>
-
-            <h2>Ringkasan Hasil Penjadwalan</h2>
-            <h3>Perbandingan Waktu Eksekusi</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Algoritma</th>
-                        <th>Waktu Eksekusi (detik)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr><td>Backtracking</td><td>{backtracking_stats['execution_time']:.4f}</td></tr>
-                    <tr><td>Greedy</td><td>{greedy_stats['execution_time']:.4f}</td></tr>
-                    <tr><td>ILP</td><td>{ilp_stats['execution_time']:.4f}</td></tr>
-                </tbody>
-            </table>
-
-            <h3>Perbandingan Statistik Penjadwalan</h3>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Algoritma</th>
-                        <th>Total Sesi Dicoba Dijadwalkan</th>
-                        <th>Sesi Berhasil Dijadwalkan</th>
-                        <th>Sesi Konflik (Gagal)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>Backtracking</td>
-                        <td>{backtracking_stats['total_slots_attempted']}</td>
-                        <td>{backtracking_stats['scheduled_slots']}</td>
-                        <td class="{'' if backtracking_stats['conflicts'] == 0 else 'highlight-error'}">{backtracking_stats['conflicts']}</td>
-                    </tr>
-                    <tr>
-                        <td>Greedy</td>
-                        <td>{greedy_stats['total_slots_attempted']}</td>
-                        <td>{greedy_stats['scheduled_slots']}</td>
-                        <td class="{'' if greedy_stats['conflicts'] == 0 else 'highlight-error'}">{greedy_stats['conflicts']}</td>
-                    </tr>
-                    <tr>
-                        <td>ILP</td>
-                        <td>{ilp_stats['total_slots_attempted']}</td>
-                        <td class="{'' if ilp_stats['scheduled_slots'] <= ilp_stats['total_slots_attempted'] else 'highlight-error'}">{ilp_stats['scheduled_slots']}</td>
-                        <td class="{'' if ilp_stats['conflicts'] == 0 else 'highlight-error'}">{ilp_stats['conflicts']}</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <hr/>
-
-            <h2>Visualisasi Perbandingan</h2>
-            <p>Berikut adalah visualisasi grafis dari perbandingan kinerja dan penggunaan sumber daya oleh ketiga algoritma.</p>
-
-            <h3>Perbandingan Waktu Eksekusi Algoritma</h3>
-            <div class="image-container">
-                <img src="{perf_img}" alt="Perbandingan Waktu Eksekusi">
+        # Schedule Tab Content (using Bootstrap classes)
+        # Add 'show active' classes directly for the first tab to ensure it's visible on load
+        schedule_tabs_html += f"""
+            <div class="tab-pane fade {'show active' if is_first_schedule_algo else ''}" id="{algo_id}-schedule-tab" role="tabpanel" aria-labelledby="{algo_id}-schedule-tab-button">
+                {generate_html_schedule_content(result['schedule']).replace('accordionPlaceholder', f'accordion-{algo_id}')}
             </div>
+        """
+        # Schedule Tab Button (using Bootstrap classes and data attributes)
+        schedule_tab_buttons_html += f"""
+            <li class="nav-item" role="presentation">
+                <button class="nav-link {'active' if is_first_schedule_algo else ''}" id="{algo_id}-schedule-tab-button" data-bs-toggle="tab" data-bs-target="#{algo_id}-schedule-tab" type="button" role="tab" aria-controls="{algo_id}-schedule-tab" aria-selected="{'true' if is_first_schedule_algo else 'false'}">{algo_name}</button>
+            </li>
+        """
+        is_first_schedule_algo = False # Ensure only the first schedule tab button gets 'active'
 
-            <h3>Perbandingan Jumlah Sesi Terjadwal per Hari</h3>
-            <div class="image-container">
-                <img src="{schedule_day_img}" alt="Perbandingan Sesi per Hari">
+        # Failed Sessions Tab Content (using Bootstrap classes)
+        # Do NOT add 'show active' to failed sessions tabs by default
+        failed_tabs_html += f"""
+            <div class="tab-pane fade" id="{algo_id}-failed-tab" role="tabpanel" aria-labelledby="{algo_id}-failed-tab-button">
+                {generate_html_failed_sessions_content(result['stats'].get('failed_details', []))}
             </div>
+        """
+        # Failed Sessions Tab Button (using Bootstrap classes and data attributes)
+        failed_tab_buttons_html += f"""
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="{algo_id}-failed-tab-button" data-bs-toggle="tab" data-bs-target="#{algo_id}-failed-tab" type="button" role="tab" aria-controls="{algo_id}-failed-tab" aria-selected="false">{algo_name} Gagal</button>
+            </li>
+        """
+        # is_first_failed_algo is not used here, as we don't want any failed tab active by default
 
-            <h3>Perbandingan Penggunaan Mata Kuliah</h3>
-            <div class="image-container">
-                <img src="{mk_usage_img}" alt="Perbandingan Penggunaan Mata Kuliah">
-            </div>
+    # Read the HTML template file
+    try:
+        with open(template_path, 'r', encoding='utf-8') as f:
+            html_template = f.read()
+    except FileNotFoundError:
+        print(f"Error: Template file not found at {template_path}")
+        return
 
-            <h3>Perbandingan Penggunaan Ruangan</h3>
-            <div class="image-container">
-                <img src="{room_usage_img}" alt="Perbandingan Penggunaan Ruangan">
-            </div>
-
-            <h3>Perbandingan Penggunaan Slot Waktu</h3>
-            <div class="image-container">
-                <img src="{slot_usage_img}" alt="Perbandingan Penggunaan Slot Waktu">
-            </div>
-
-            <hr/>
-
-            <h2>Detail Jadwal yang Dihasilkan</h2>
-            <div class="tab-container">
-                <button class="tab-button active" onclick="openTab(event, 'backtracking-schedule-tab')">Backtracking</button>
-                <button class="tab-button" onclick="openTab(event, 'greedy-schedule-tab')">Greedy</button>
-                <button class="tab-button" onclick="openTab(event, 'ilp-schedule-tab')">ILP</button>
-            </div>
-
-            <div id="backtracking-schedule-tab" class="tab-content" style="display: block;">
-                {backtracking_schedule_content}
-            </div>
-
-            <div id="greedy-schedule-tab" class="tab-content">
-                {greedy_schedule_content}
-            </div>
-
-            <div id="ilp-schedule-tab" class="tab-content">
-                {ilp_schedule_content}
-            </div>
-
-            <hr/>
-
-            <h2>Sesi Gagal Dijadwalkan (Konflik)</h2>
-            <div class="tab-container">
-                <button class="tab-button active" onclick="openTab(event, 'backtracking-failed-tab')">Backtracking Gagal</button>
-                <button class="tab-button" onclick="openTab(event, 'greedy-failed-tab')">Greedy Gagal</button>
-                <button class="tab-button" onclick="openTab(event, 'ilp-failed-tab')">ILP Gagal</button>
-            </div>
-
-            <div id="backtracking-failed-tab" class="tab-content" style="display: block;">
-                {backtracking_failed_content}
-            </div>
-
-            <div id="greedy-failed-tab" class="tab-content">
-                {greedy_failed_content}
-            </div>
-
-            <div id="ilp-failed-tab" class="tab-content">
-                {ilp_failed_content}
-            </div>
-        </div>
-
-        <script>
-            // JavaScript for Tabs
-            function openTab(evt, tabName) {{
-                var i, tabcontent, tabbuttons;
-                
-                // Determine if we are opening a schedule tab or a failed tab
-                var isScheduleTab = tabName.includes('-schedule-tab');
-
-                // Hide all tab contents
-                tabcontent = document.getElementsByClassName("tab-content");
-                for (i = 0; i < tabcontent.length; i++) {{
-                    tabcontent[i].style.display = "none";
-                }}
-
-                // Deactivate all tab buttons
-                tabbuttons = document.getElementsByClassName("tab-button");
-                for (i = 0; i < tabbuttons.length; i++) {{
-                    tabbuttons[i].className = tabbuttons[i].className.replace(" active", "");
-                }}
-
-                // Show the specific tab content and activate its button
-                document.getElementById(tabName).style.display = "block";
-                evt.currentTarget.className += " active";
-
-                // If opening a schedule tab, ensure its first accordion is open
-                if (isScheduleTab) {{
-                    var firstAccordion = document.getElementById(tabName).querySelector('.accordion');
-                    if (firstAccordion && !firstAccordion.classList.contains('active')) {{
-                        firstAccordion.click(); // Programmatically click to open
-                    }}
-                }}
-            }}
-
-            // JavaScript for Accordion
-            document.addEventListener('DOMContentLoaded', (event) => {{
-                // Initialize the first schedule tab
-                var firstScheduleTabButton = document.querySelector('.tab-container:nth-of-type(1) .tab-button');
-                if (firstScheduleTabButton) {{
-                    firstScheduleTabButton.click();
-                }}
-                
-                // Initialize the first failed sessions tab
-                var firstFailedTabButton = document.querySelector('.tab-container:nth-of-type(2) .tab-button');
-                if (firstFailedTabButton) {{
-                    firstFailedTabButton.click();
-                }}
-
-
-                var accordions = document.getElementsByClassName("accordion");
-                for (let i = 0; i < accordions.length; i++) {{
-                    accordions[i].addEventListener("click", function() {{
-                        this.classList.toggle("active");
-                        var panel = this.nextElementSibling;
-                        if (panel.style.maxHeight) {{
-                            panel.style.maxHeight = null;
-                        }} else {{
-                            panel.style.maxHeight = panel.scrollHeight + "px";
-                        }} 
-                    }});
-                }}
-            }});
-        </script>
-    </body>
-    </html>
-    """
+    # Replace placeholders in the template
+    html_content = html_template.replace("{{MK_TABLE_HTML}}", mk_table_html)
+    html_content = html_content.replace("{{DOSEN_TABLE_HTML}}", dosen_table_html)
+    html_content = html_content.replace("{{SLOT_TABLE_HTML}}", slot_table_html)
+    html_content = html_content.replace("{{RUANGAN_TABLE_HTML}}", ruangan_table_html)
+    html_content = html_content.replace("{{ALGORITHM_STATS_ROWS}}", algorithm_stats_rows)
+    html_content = html_content.replace("{{PERF_IMG}}", perf_img)
+    html_content = html_content.replace("{{SCHEDULE_DAY_IMG}}", schedule_day_img)
+    html_content = html_content.replace("{{MK_USAGE_IMG}}", mk_usage_img)
+    html_content = html_content.replace("{{ROOM_USAGE_IMG}}", room_usage_img)
+    html_content = html_content.replace("{{SLOT_USAGE_IMG}}", slot_usage_img)
+    html_content = html_content.replace("{{SCHEDULE_TAB_BUTTONS}}", schedule_tab_buttons_html)
+    html_content = html_content.replace("{{SCHEDULE_TAB_CONTENTS}}", schedule_tabs_html)
+    html_content = html_content.replace("{{FAILED_TAB_BUTTONS}}", failed_tab_buttons_html)
+    html_content = html_content.replace("{{FAILED_TAB_CONTENTS}}", failed_tabs_html)
     
-    # Simpan file HTML inside the timestamped directory
+    # Save the HTML file inside the timestamped directory
     full_path = os.path.join(report_dir, output_filename)
     with open(full_path, "w", encoding="utf-8") as f:
         f.write(html_content)
     print(f"\nLaporan lengkap berhasil dibuat: {full_path}")
+

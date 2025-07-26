@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan Lengkap Penjadwalan Kuliah</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" xintegrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        /* Custom styles that are not directly replaced by Bootstrap */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .highlight-error {
+            color: red;
+            font-weight: bold;
+        }
+        /* Ensure images are responsive within their containers */
+        .image-container img {
+            max-width: 90%;
+            height: auto;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .conflict-row td {
+            background-color: #ffe0e0; /* Light red background for conflict rows */
+        }
+        .conflict-item {
+            color: #c00;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="bg-light text-dark">
+    <div class="container my-4 p-4 bg-white rounded shadow-lg">
+        <h1 class="text-center text-primary-emphasis border-bottom border-primary pb-3 mb-4">Laporan Lengkap Penjadwalan Kuliah</h1>
+        <p class="lead">Laporan ini menyajikan hasil penjadwalan kuliah menggunakan berbagai algoritma berbeda. Tujuannya adalah membandingkan performa dan efektivitas masing-masing algoritma dalam menghasilkan jadwal yang optimal dan bebas konflik berdasarkan dataset yang diberikan.</p>
+
+        <hr class="my-4"/>
+
+        <h2 class="text-primary border-bottom pb-2 mt-5">Dataset yang Digunakan</h2>
+        <p>Berikut adalah detail komponen dataset yang digunakan untuk proses penjadwalan:</p>
+
+        <h3 class="mt-4">Data Mata Kuliah</h3>
+        {{MK_TABLE_HTML}}
+
+        <h3 class="mt-4">Data Dosen</h3>
+        {{DOSEN_TABLE_HTML}}
+
+        <h3 class="mt-4">Data Slot Waktu</h3>
+        {{SLOT_TABLE_HTML}}
+
+        <h3 class="mt-4">Data Ruangan</h3>
+        {{RUANGAN_TABLE_HTML}}
+
+        <hr class="my-4"/>
+
+        <h2 class="text-primary border-bottom pb-2 mt-5">Ringkasan Hasil Penjadwalan</h2>
+        <p>Berikut adalah ringkasan hasil penjadwalan yang dihasilkan oleh masing-masing algoritma:</p>
+        <h3 class="mt-4">Perbandingan Statistik Penjadwalan</h3>
+        <table class="table table-bordered table-striped table-hover">
+            <thead>
+                <tr>
+                    <th>Algoritma</th>
+                    <th>Total Sesi Dicoba Dijadwalkan</th>
+                    <th>Sesi Berhasil Dijadwalkan</th>
+                    <th>Sesi Konflik (Gagal)</th>
+                    <th>Waktu Eksekusi (detik)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ALGORITHM_STATS_ROWS}}
+            </tbody>
+        </table>
+
+        <hr class="my-4"/>
+
+        <h2 class="text-primary border-bottom pb-2 mt-5">Visualisasi Perbandingan</h2>
+        <p>Berikut adalah visualisasi grafis dari perbandingan kinerja dan penggunaan sumber daya oleh algoritma.</p>
+
+        <h3 class="mt-4">Perbandingan Waktu Eksekusi Algoritma</h3>
+        <div class="image-container text-center my-4">
+            <img src="{{PERF_IMG}}" class="img-fluid rounded shadow-sm" alt="Perbandingan Waktu Eksekusi">
+        </div>
+
+        <h3 class="mt-4">Perbandingan Jumlah Sesi Terjadwal per Hari</h3>
+        <div class="image-container text-center my-4">
+            <img src="{{SCHEDULE_DAY_IMG}}" class="img-fluid rounded shadow-sm" alt="Perbandingan Sesi per Hari">
+        </div>
+
+        <h3 class="mt-4">Perbandingan Penggunaan Mata Kuliah</h3>
+        <div class="image-container text-center my-4">
+            <img src="{{MK_USAGE_IMG}}" class="img-fluid rounded shadow-sm" alt="Perbandingan Penggunaan Mata Kuliah">
+        </div>
+
+        <h3 class="mt-4">Perbandingan Penggunaan Ruangan</h3>
+        <div class="image-container text-center my-4">
+            <img src="{{ROOM_USAGE_IMG}}" class="img-fluid rounded shadow-sm" alt="Perbandingan Penggunaan Ruangan">
+        </div>
+
+        <h3 class="mt-4">Perbandingan Penggunaan Slot Waktu</h3>
+        <div class="image-container text-center my-4">
+            <img src="{{SLOT_USAGE_IMG}}" class="img-fluid rounded shadow-sm" alt="Perbandingan Penggunaan Slot Waktu">
+        </div>
+
+        <hr class="my-4"/>
+
+        <h2 class="text-primary border-bottom pb-2 mt-5">Detail Jadwal yang Dihasilkan</h2>
+        <!-- Bootstrap Tabs for Schedules -->
+        <ul class="nav nav-tabs" id="scheduleTab" role="tablist">
+            {{SCHEDULE_TAB_BUTTONS}}
+        </ul>
+        <div class="tab-content" id="scheduleTabContent">
+            <br/>
+            {{SCHEDULE_TAB_CONTENTS}}
+        </div>
+
+        <hr class="my-4"/>
+
+        <h2 class="text-primary border-bottom pb-2 mt-5">Sesi Gagal Dijadwalkan (Konflik)</h2>
+        <!-- Bootstrap Tabs for Failed Sessions -->
+        <ul class="nav nav-tabs" id="failedTab" role="tablist">
+            {{FAILED_TAB_BUTTONS}}
+        </ul>
+        <div class="tab-content" id="failedTabContent">
+            <br/>
+            {{FAILED_TAB_CONTENTS}}
+        </div>
+    </div>
+
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" xintegrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // Activate the first tab in the 'schedule' group on load
+            var firstScheduleTabButton = document.querySelector('#scheduleTab .nav-link.active');
+
+            if (firstScheduleTabButton) {
+                // Manually trigger Bootstrap's tab show method
+                var bsTab = new bootstrap.Tab(firstScheduleTabButton);
+                bsTab.show();
+            }
+
+            // Activate the first tab in the 'failed' group on load
+            var firstFailedTabButton = document.querySelector('#failedTab .nav-link.active');
+            if (firstFailedTabButton) {
+                // Manually trigger Bootstrap's tab show method
+                var bsFailedTab = new bootstrap.Tab(firstFailedTabButton);
+                bsFailedTab.show();
+            }
+
+            // Note: The first tab in the 'failed' group will NOT be activated by default
+            // to ensure only one main tab group is active on page load.
+            // If you wish to activate it, you can add similar logic here.
+        });
+    </script>
+</body>
+</html>
