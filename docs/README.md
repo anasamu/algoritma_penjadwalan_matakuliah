@@ -29,10 +29,16 @@ Konfigurasi dan customization sistem.
 Panduan pemecahan masalah umum.
 
 ### 📈 [Flowcharts](flowcharts/)
-Diagram alur untuk berbagai proses dalam sistem.
+Diagram alur untuk berbagai proses dalam sistem:
+- [Main System Flow](flowcharts/main-system-flow.md) - Alur utama sistem
+- [Greedy Algorithm](flowcharts/greedy-flowchart.md) - Flowchart algoritma Greedy
+- [Backtracking Algorithm](flowcharts/backtracking-flowchart.md) - Flowchart algoritma Backtracking
+- [ILP Algorithm](flowcharts/ilp-flowchart.md) - Flowchart algoritma ILP
+- [Data Flow Diagram](flowcharts/data-flow-diagram.md) - Diagram aliran data sistem
 
 ### 🖼️ [Diagrams](diagrams/)
-Diagram arsitektur dan komponen sistem.
+Diagram arsitektur dan komponen sistem:
+- [System Architecture](diagrams/system-architecture.md) - Arsitektur lengkap sistem
 
 ## Quick Navigation
 
